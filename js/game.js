@@ -1347,7 +1347,8 @@ function showResult(clear) {
   show('result', true);
 }
 
-function shareUrl() { return location.href.split('#')[0]; }
+const SHARE_URL = 'https://techgym.jp/column/claude-code-game-kobayakawa/';
+function shareUrl() { return SHARE_URL; }
 $('shareX').addEventListener('click', () => {
   window.open('https://twitter.com/intent/tweet?text=' + encodeURIComponent(lastShare) + '&url=' + encodeURIComponent(shareUrl()), '_blank', 'noopener');
 });
