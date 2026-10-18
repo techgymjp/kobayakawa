@@ -41,10 +41,11 @@ function newGame() {
     units: [], enemies: [], bullets: [], parts: [], corpses: [], pickups: [], fx: [], floats: [],
     soldierKills: 0, killed: [], shake: 0, hitstop: 0,
     events: makeEvents(), nextWestAct: 14, nextEastAct: 1e9, eastAwake: false,
-    ieyasuDead: false, endT: 0, drumT: 0, beat: 0,
+    ieyasuDead: false, endT: 0, drumT: 0, beat: 0, nextAmbHorn: 25,
     cam: { x: PLAYER_START.x, y: PLAYER_START.y - 100 },
   };
   spawnArmies();
+  lastHornT = -10;
   $('msgs').innerHTML = '';
 }
 
@@ -102,11 +103,11 @@ function makeEvents() {
   return [
     { t: 0.2, f: () => msg('慶長五年九月十五日　正午　松尾山', 'sys', 5) },
     { t: 2.4, f: () => msg('小早川秀秋、東軍への寝返りを決す——', 'sys', 5) },
-    { t: 5.0, f: () => { msg('されど、その企て、石田方に露見せり！', 'warn', 5); Sfx.horn(); G.shake = 6; activateNear('W', 1050); } },
-    { t: 8.5, f: () => msg('石田三成「金吾め、やはり裏切ったか！ 討ち取れぃ！」', 'say', 6) },
+    { t: 5.0, f: () => { msg('されど、その企て、石田方に露見せり！', 'warn', 5); Sfx.horn(0.45); lastHornT = G.t; Sfx.swell(0.9); G.shake = 6; activateNear('W', 1050); } },
+    { t: 8.5, f: () => { msg('石田三成「金吾め、やはり裏切ったか！ 討ち取れぃ！」', 'say', 6); unitHorn(G.units.find((u) => u.name === '石田三成'), true); } },
     { t: 12, f: () => msg('四方は敵ばかり……斬って、駆けて、生き延びよ！', 'sys', 5) },
     { t: 34, f: () => { msg('ドドーン！　家康の「問鉄砲」が松尾山に撃ちかけられた！', 'warn', 6); Sfx.gun(0.9); setTimeout(() => Sfx.gun(0.8), 180); setTimeout(() => Sfx.gun(0.9), 420); G.shake = 10; flashScreen('rgba(255,240,200,0.5)'); } },
-    { t: 37, f: () => { msg('徳川家康「あの小倅、いつまで迷うておる！ 構わぬ、攻め潰せ！」', 'say', 7); Sfx.horn(); G.eastAwake = true; G.nextEastAct = G.t + 2; activateNear('E', 700); } },
+    { t: 37, f: () => { msg('徳川家康「あの小倅、いつまで迷うておる！ 構わぬ、攻め潰せ！」', 'say', 7); Sfx.horn(0.45, 0.3, 0.9, [0.6, 0.6, 0.6, 2.0]); lastHornT = G.t; Sfx.swell(1); G.eastAwake = true; G.nextEastAct = G.t + 2; activateNear('E', 700); } },
     { t: 42, f: () => msg('東西両軍、ことごとく敵となる。孤立無援——', 'sys', 5) },
   ];
 }
@@ -116,7 +117,37 @@ function activateUnit(u, quiet) {
   u.active = true;
   if (u.gen.alive) u.gen.state = 'chase';
   for (const s of u.soldiers) if (s.alive && s.state === 'hold') s.state = 'chase';
-  if (!quiet) msg(`${u.side === 'W' ? '【西軍】' : '【東軍】'}${u.name}隊、攻め寄せる！`, u.side === 'W' ? 'w' : 'e', 4);
+  if (!quiet) {
+    msg(`${u.side === 'W' ? '【西軍】' : '【東軍】'}${u.name}隊、攻め寄せる！`, u.side === 'W' ? 'w' : 'e', 4);
+    unitHorn(u);
+  }
+}
+
+// その部隊の方角・距離から法螺貝を鳴らす
+let lastHornT = -10;
+function unitHorn(u, force) {
+  if (!u || !G || G.state !== 'play') return;
+  if (!force && G.t - lastHornT < 3.5) return;
+  lastHornT = G.t;
+  const P = G.player;
+  const d = hypot(u.x - P.x, u.y - P.y);
+  const vol = clamp(0.4 - d / 4500, 0.06, 0.4);
+  const pan = clamp((u.x - P.x) / 900, -1, 1);
+  const pitch = u.side === 'W' ? 1 : 0.88; // 東西で音色を少し変える
+  const calls = Math.random() < 0.5 ? [0.5, 0.5, 1.5] : [0.8, 1.8];
+  Sfx.horn(vol, pan, pitch * rand(0.95, 1.05), calls);
+}
+
+// 危険度（近くで迫る敵の多さと体力の低さ）0〜1
+function threatLevel() {
+  const P = G.player;
+  let th = 0;
+  for (const e of G.enemies) {
+    if (!e.alive || e.state !== 'chase') continue;
+    const d = Math.abs(e.x - P.x) + Math.abs(e.y - P.y);
+    if (d < 600) { const w = 1 - d / 600; th += w * w * (e.type === 'gen' ? 3 : 1); }
+  }
+  return clamp(th / 12 + (1 - P.hp / P.maxHp) * 0.35, 0, 1);
 }
 function activateNear(side, range) {
   const P = G.player;
@@ -425,6 +456,7 @@ function killEnemy(e) {
     u.dead = true;
     G.killed.push(u.name);
     Sfx.kill();
+    Sfx.swell(u.ieyasu ? 1 : 0.7);
     G.shake = 14; G.hitstop = 0.18;
     G.pickups.push({ x: e.x, y: e.y, heal: 80, t: 0, big: true });
     // 残兵は潰走
@@ -699,6 +731,14 @@ function update(dt) {
   separate();
   updateEffects(dt);
   G.shake = Math.max(0, G.shake - dt * 30);
+  // 鬨の声：危ないほど大きく、空いていれば遠くのざわめき程度
+  Sfx.crowd(G.state === 'play' ? 0.04 + threatLevel() * 0.96 : G.state === 'dying' ? 0 : 0.6);
+  // 戦場のあちこちで鳴る法螺貝
+  if (G.state === 'play' && G.t > G.nextAmbHorn) {
+    G.nextAmbHorn = G.t + rand(18, 32);
+    const act = G.units.filter((v) => v.active && !v.dead);
+    if (act.length) unitHorn(act[(Math.random() * act.length) | 0]);
+  }
   // 太鼓
   if (G.state === 'play') {
     G.drumT -= dt;
@@ -1263,7 +1303,7 @@ function startGame() {
 }
 
 function togglePause() {
-  if (G.state === 'play') { G.state = 'pause'; show('pause', true); }
+  if (G.state === 'play') { G.state = 'pause'; show('pause', true); Sfx.crowd(0); }
   else if (G.state === 'pause') { G.state = 'play'; show('pause', false); }
 }
 
@@ -1362,6 +1402,7 @@ function frame(ts) {
       draw();
       updateHUD();
     } else {
+      Sfx.crowd(0);
       draw();
     }
   }

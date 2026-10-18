@@ -35,5 +35,5 @@
 - `index.html` / `style.css` — 画面と UI
 - `js/data.js` — 地形・河川・街道・地名・布陣データ
 - `js/terrain.js` — 標高グリッドと地形画像の生成
-- `js/audio.js` — WebAudio による効果音
+- `js/audio.js` — WebAudio による効果音（鬨の声・法螺貝・太鼓など）
 - `js/game.js` — ゲーム本体
