@@ -47,7 +47,7 @@ Capacitor 8 で Android アプリにしています（パッケージ名 `jp.tec
 
 - `npm ci` → `npm run build`（`www/` に Web ファイルをコピー）→ `npx cap sync android` → `cd android && ./gradlew assembleDebug`
 - GitHub Actions（`.github/workflows/android.yml`）が push のたびに動作確認用 APK（デバッグ署名・テスト広告）を作ります。既定ブランチのビルドは Release `android-latest` に載り、
-  `https://github.com/techgymjp/kobayakawa/releases/latest/download/kobayakawa.apk` から入れられます。
+  `https://github.com/techgymjp/kobayakawa/releases/latest/download/kobayakawa.apk` から入れられます（QR コード：`docs/apk-qr.png`）。
 - GitHub Secrets（`ANDROID_KEYSTORE_BASE64` / `ANDROID_KEYSTORE_PASSWORD` / `ANDROID_KEY_ALIAS` / `ANDROID_KEY_PASSWORD`）を登録すると、Google Play 用の署名付き AAB も作ります。
 
 アプリ版だけの動き：
