@@ -5,11 +5,13 @@ const Ads = (() => {
     test: {
       interstitial: 'ca-app-pub-3940256099942544/1033173712',
       rewarded: 'ca-app-pub-3940256099942544/5224354917',
+      banner: 'ca-app-pub-3940256099942544/6300978111',
     },
     // 本番の広告ユニット
     production: {
       interstitial: 'ca-app-pub-6411535997477460/3793697270',
       rewarded: 'ca-app-pub-6411535997477460/2480615603',
+      banner: 'ca-app-pub-6411535997477460/7042677144',
     },
   };
   const RETRY_MS = 20000;      // 読み込みに失敗したら少し待って再挑戦する
@@ -110,6 +112,27 @@ const Ads = (() => {
   }
 
   // 同意した内容をあとから変更するための Google のフォームを開く
+  // ポーズ中だけ画面下にバナーを出す
+  let bannerWanted = false, bannerShown = false;
+  async function showBanner() {
+    bannerWanted = true;
+    if (!AdMob || !ids.banner || bannerShown || showing) return;
+    await initDone;
+    if (!ready || !bannerWanted) return;
+    bannerShown = true;
+    try {
+      await AdMob.showBanner({ adId: ids.banner, adSize: 'ADAPTIVE_BANNER', position: 'BOTTOM_CENTER', margin: 0, isTesting: testing });
+    } catch (e) { bannerShown = false; return; }
+    // 読み込み中にポーズが解除されていたら消す
+    if (!bannerWanted) { bannerShown = true; hideBanner(); }
+  }
+  function hideBanner() {
+    bannerWanted = false;
+    if (!AdMob || !bannerShown) return;
+    bannerShown = false;
+    AdMob.removeBanner().catch(() => {});
+  }
+
   function showPrivacyOptions() {
     if (!AdMob) return Promise.resolve();
     return AdMob.showPrivacyOptionsForm().catch(() => {});
@@ -125,5 +148,7 @@ const Ads = (() => {
     showInterstitial,
     showRewarded,
     showPrivacyOptions,
+    showBanner,
+    hideBanner,
   };
 })();

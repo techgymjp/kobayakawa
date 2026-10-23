@@ -1311,8 +1311,8 @@ function startGame() {
 }
 
 function togglePause() {
-  if (G.state === 'play') { G.state = 'pause'; show('pause', true); Sfx.crowd(0); }
-  else if (G.state === 'pause') { G.state = 'play'; show('pause', false); }
+  if (G.state === 'play') { G.state = 'pause'; show('pause', true); Sfx.crowd(0); Ads.showBanner(); }
+  else if (G.state === 'pause') { G.state = 'play'; show('pause', false); Ads.hideBanner(); }
 }
 
 function titleFor(clear, n) {
@@ -1399,13 +1399,12 @@ I18N.onChange(() => { updateShareLabel(); updateMuteLabel(); });
 document.querySelectorAll('[data-lang]').forEach((b) => b.addEventListener('click', () => I18N.setLang(b.dataset.lang)));
 applyLang();
 $('btnStart').addEventListener('click', startGame);
-// 2 回に 1 回、「再び出陣」の前に全画面広告を出す（Android アプリのみ）
-let gameOvers = 0, retryBusy = false;
+// 「再び出陣」の前に毎回、全画面広告を出す（Android アプリのみ）
+let retryBusy = false;
 $('btnRetry').addEventListener('click', async () => {
   if (retryBusy) return;
   Sfx.init();
-  gameOvers++;
-  if (Ads.available && gameOvers % 2 === 0) {
+  if (Ads.available) {
     retryBusy = true;
     await Ads.showInterstitial();
     retryBusy = false;
