@@ -10,7 +10,7 @@
 
 ## 遊び方
 
-`index.html` をブラウザで開くだけで遊べます（ビルド不要・静的ファイルのみ）。GitHub Pages などにそのまま置けます。
+`index.html` をブラウザで開くだけで遊べます（Web 版はビルド不要）。Vercel では `vercel.json` の設定で `npm run build` の結果（`www/`）を公開します。
 
 | 操作 | PC | スマホ |
 | --- | --- | --- |
@@ -37,3 +37,30 @@
 - `js/terrain.js` — 標高グリッドと地形画像の生成
 - `js/audio.js` — WebAudio による効果音（鬨の声・法螺貝・太鼓など）
 - `js/game.js` — ゲーム本体
+- `js/ads.js` / `js/ads-config.js` / `js/build-info.js` — Android アプリ用の広告とバージョン表示（Web 版では何もしない）
+- `android/` / `capacitor.config.json` / `scripts/build-web.js` — Android アプリ（Capacitor）
+- `assets/` — アプリのアイコンと起動画面の元画像
+
+## Android アプリ
+
+Capacitor 8 で Android アプリにしています（パッケージ名 `jp.techgym.kobayakawa`、横画面）。ゲームのファイルはアプリに同梱するので、オフラインでも遊べます（フォントだけはオフラインだと端末の明朝体になります）。
+
+- `npm ci` → `npm run build`（`www/` に Web ファイルをコピー）→ `npx cap sync android` → `cd android && ./gradlew assembleDebug`
+- GitHub Actions（`.github/workflows/android.yml`）が push のたびに動作確認用 APK（デバッグ署名・テスト広告）を作ります。既定ブランチのビルドは Release `android-latest` に載り、
+  `https://github.com/techgymjp/kobayakawa/releases/latest/download/kobayakawa.apk` から入れられます。
+- GitHub Secrets（`ANDROID_KEYSTORE_BASE64` / `ANDROID_KEYSTORE_PASSWORD` / `ANDROID_KEY_ALIAS` / `ANDROID_KEY_PASSWORD`）を登録すると、Google Play 用の署名付き AAB も作ります。
+
+アプリ版だけの動き：
+
+- 戻るボタン：プレイ中は一時停止、タイトル・結果画面ではアプリを終了
+- 別のアプリに切り替えると一時停止し、音も止める
+- 結果画面の共有は Android の共有メニュー
+- 広告（AdMob）：討死したとき 1 合戦に 1 回だけ、リワード広告を見ると体力満タンで復活できる（10 秒で自動的に結果画面へ）。「再び出陣」を押したとき 2 回に 1 回インタースティシャル広告。バナーは出さない
+- タイトル画面にビルド番号・プライバシーポリシー・（EU など必要な地域では）広告の設定
+
+**本番の AdMob ID はまだ入っていません。** いまは Google のテスト用 ID です。AdMob でアプリと広告ユニット（インタースティシャル・リワード）を作ったら、`android/app/src/main/res/values/strings.xml` の `admob_app_id` と `js/ads.js` の `production` を差し替えてください。差し替えるまでは Google Play 用のビルド（`ADMOB_MODE=production`）がエラーで止まるようにしています。
+
+## ライセンス
+
+著作権はテックジム株式会社に帰属します（All rights reserved）。許可なく複製・改変・再配布すること、Web サイトやアプリ（Google Play、App Store など）として公開・販売すること、名前・ロゴ・アイコン・画像を使うことを禁止します。
+テックジムの受講生が学習目的で複製・改変することは許可しますが、アプリストアでの公開、広告の掲載、販売などの商用利用は禁止し、著作権表示を残してください。詳しくは [LICENSE](LICENSE) を見てください。

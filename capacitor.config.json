@@ -1,0 +1,8 @@
+{
+  "appId": "jp.techgym.kobayakawa",
+  "appName": "孤軍奮闘小早川",
+  "webDir": "www",
+  "android": {
+    "backgroundColor": "#1a120c"
+  }
+}

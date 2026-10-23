@@ -94,6 +94,9 @@ const Sfx = (() => {
     crowd: setCrowd,
     // 一時的に「ワーッ」と沸き上がる
     swell(amt) { if (crowd) { crowd.boost = Math.max(crowd.boost, amt); crowd.last = 0; } },
+    // アプリが裏に回ったときなどに音を止める／再開する
+    suspend() { if (ac && ac.state === 'running') ac.suspend(); },
+    resume() { if (ac && ac.state === 'suspended') ac.resume(); },
     get muted() { return muted; },
     toggle() { muted = !muted; if (master) master.gain.value = muted ? 0 : 0.5; return muted; },
     slash() { noise(0.12, 3200, 0.8, 0.35, 'highpass'); },

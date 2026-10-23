@@ -171,7 +171,7 @@ function msg(text, cls = 'sys', life = 4) {
   el.className = 'msg ' + cls;
   el.textContent = text;
   box.appendChild(el);
-  while (box.children.length > (CW < 600 ? 3 : 5)) box.removeChild(box.firstChild);
+  while (box.children.length > (CW < 600 || CH < 500 ? 3 : 5)) box.removeChild(box.firstChild);
   setTimeout(() => { el.classList.add('out'); setTimeout(() => el.remove(), 600); }, life * 1000);
 }
 function banner(text, sub) {
@@ -717,7 +717,7 @@ function update(dt) {
   if (G.state === 'dying' || G.state === 'clearing') {
     G.endT += dt;
     dt *= 0.35;
-    if (G.endT > 2.6) showResult(G.state === 'clearing');
+    if (G.endT > 2.6) { if (G.state === 'dying' && canContinue()) showContinue(); else showResult(G.state === 'clearing'); }
   }
   G.t += dt;
   while (G.events.length && G.events[0].t <= G.t) G.events.shift().f();
@@ -1298,7 +1298,7 @@ function show(id, on) { $(id).classList.toggle('hidden', !on); }
 function startGame() {
   Sfx.init();
   newGame();
-  show('title', false); show('result', false); show('pause', false); show('hud', true);
+  show('title', false); show('result', false); show('pause', false); show('continue', false); show('hud', true);
   document.body.classList.add('playing');
 }
 
@@ -1349,6 +1349,12 @@ function showResult(clear) {
 
 const SHARE_URL = 'https://techgym.jp/column/claude-code-game-kobayakawa/';
 function shareUrl() { return SHARE_URL; }
+
+// Android アプリ（Capacitor）で動いているか
+const NATIVE = !!(window.Capacitor && window.Capacitor.isNativePlatform && window.Capacitor.isNativePlatform());
+const plugin = (name) => (NATIVE && window.Capacitor.Plugins ? window.Capacitor.Plugins[name] : null);
+if (NATIVE) document.body.classList.add('native');
+
 $('shareX').addEventListener('click', () => {
   window.open('https://twitter.com/intent/tweet?text=' + encodeURIComponent(lastShare) + '&url=' + encodeURIComponent(shareUrl()), '_blank', 'noopener');
 });
@@ -1360,6 +1366,11 @@ $('shareFb').addEventListener('click', () => {
 });
 $('shareNative').addEventListener('click', async () => {
   const text = lastShare + '\n' + shareUrl();
+  // アプリでは Android の共有メニューを出す
+  if (plugin('Share')) {
+    try { await plugin('Share').share({ title: '孤軍奮闘小早川', text: lastShare, url: shareUrl(), dialogTitle: '戦果を共有' }); } catch (_) { /* キャンセル */ }
+    return;
+  }
   if (navigator.share) {
     try { await navigator.share({ title: '孤軍奮闘小早川', text: lastShare, url: shareUrl() }); } catch (_) { /* キャンセル */ }
     return;
@@ -1368,13 +1379,96 @@ $('shareNative').addEventListener('click', async () => {
   catch (_) { window.prompt('コピーしてください', text); }
   setTimeout(() => { $('shareNative').textContent = '結果をコピー'; }, 2000);
 });
-if (!navigator.share) $('shareNative').textContent = '結果をコピー';
+if (!navigator.share && !plugin('Share')) $('shareNative').textContent = '結果をコピー';
 $('btnStart').addEventListener('click', startGame);
-$('btnRetry').addEventListener('click', startGame);
+// 2 回に 1 回、「再び出陣」の前に全画面広告を出す（Android アプリのみ）
+let gameOvers = 0, retryBusy = false;
+$('btnRetry').addEventListener('click', async () => {
+  if (retryBusy) return;
+  Sfx.init();
+  gameOvers++;
+  if (Ads.available && gameOvers % 2 === 0) {
+    retryBusy = true;
+    await Ads.showInterstitial();
+    retryBusy = false;
+  }
+  startGame();
+});
 $('btnTitle').addEventListener('click', () => { show('result', false); show('title', true); titleScene(); });
 $('btnResume').addEventListener('click', togglePause);
 $('btnMute').addEventListener('click', () => { Sfx.init(); $('btnMute').textContent = Sfx.toggle() ? '音：切' : '音：入'; });
 $('btnPause').addEventListener('click', () => { if (G && (G.state === 'play' || G.state === 'pause')) togglePause(); });
+
+// ---------------- リワード広告で復活（Android アプリのみ・1 合戦 1 回） ----------------
+let contBusy = false;
+function canContinue() { return !G.continued && Ads.available; }
+function showContinue() {
+  G.state = 'continue'; G.contT = 10; contBusy = false;
+  $('contWatch').disabled = false;
+  $('contWatch').textContent = '広告を見て復活する';
+  $('contNote').textContent = '';
+  $('contTime').textContent = '10';
+  show('hud', false);
+  show('continue', true);
+}
+function giveUp() {
+  if (G.state !== 'continue') return;
+  show('continue', false);
+  G.state = 'dying';
+  showResult(false);
+}
+$('contGiveUp').addEventListener('click', giveUp);
+$('contWatch').addEventListener('click', async () => {
+  if (G.state !== 'continue' || contBusy) return;
+  contBusy = true;
+  $('contWatch').disabled = true;
+  $('contWatch').textContent = '広告を読み込み中……';
+  const result = await Ads.showRewarded();
+  if (G.state !== 'continue') return;
+  if (result === 'unavailable') {
+    $('contNote').textContent = '広告を読み込めませんでした';
+    setTimeout(giveUp, 2200);
+    return;
+  }
+  if (result !== 'rewarded') { giveUp(); return; }
+  show('continue', false);
+  revive();
+});
+function revive() {
+  const P = G.player;
+  G.continued = true;
+  P.dead = false; P.hp = P.maxHp; P.st = P.maxSt; P.inv = 3;
+  P.vx = P.vy = 0;
+  // 周りの敵を押し返して立て直す間を作る
+  for (const e of G.enemies) {
+    const dx = e.x - P.x, dy = e.y - P.y, d = hypot(dx, dy) || 1;
+    if (d < 200) { e.kvx += dx / d * 500; e.kvy += dy / d * 500; e.atkT = 0; e.aimT = 0; }
+  }
+  G.bullets = [];
+  G.state = 'play';
+  show('hud', true);
+  banner('小早川秀秋、再起！', 'まだ死に場所はここではない');
+  Sfx.horn(0.45); Sfx.swell(1);
+}
+
+// アプリが裏に回ったら一時停止して音を止める
+document.addEventListener('visibilitychange', () => {
+  if (document.hidden) { if (G && G.state === 'play') togglePause(); Sfx.suspend(); }
+  else if (!Ads.showing) Sfx.resume();
+});
+// Android の戻るボタン：プレイ中はポーズ切替、タイトル・結果画面ではアプリを閉じる
+if (plugin('App')) {
+  plugin('App').addListener('backButton', () => {
+    if (!G || G.state === 'title' || G.state === 'over') plugin('App').exitApp();
+    else if (G.state === 'continue') giveUp();
+    else if (G.state === 'play' || G.state === 'pause') togglePause();
+  });
+}
+// どのビルドが入っているか分かるよう、アプリ版はタイトル画面にバージョンを出す
+if (window.APP_VERSION && window.APP_VERSION !== 'dev') $('buildInfo').textContent = window.APP_VERSION;
+// EU など同意が必要な地域では、タイトル画面から広告の同意内容を変更できるようにする
+Ads.initDone.then(() => { if (Ads.privacyOptionsRequired) $('adPrivacy').classList.remove('hidden'); });
+$('adPrivacyLink').addEventListener('click', (e) => { e.preventDefault(); Ads.showPrivacyOptions(); });
 
 // タイトル背景：戦場をゆっくり見渡す
 function titleScene() {
@@ -1404,6 +1498,11 @@ function frame(ts) {
       updateHUD();
     } else {
       Sfx.crowd(0);
+      if (G.state === 'continue' && !Ads.showing && !contBusy) {
+        G.contT -= dt;
+        $('contTime').textContent = Math.max(0, Math.ceil(G.contT));
+        if (G.contT <= 0) giveUp();
+      }
       draw();
     }
   }
