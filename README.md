@@ -58,7 +58,7 @@ Capacitor 8 で Android アプリにしています（パッケージ名 `jp.tec
 - 広告（AdMob）：討死したとき 1 合戦に 1 回だけ、リワード広告を見ると体力満タンで復活できる（10 秒で自動的に結果画面へ）。「再び出陣」を押したとき 2 回に 1 回インタースティシャル広告。バナーは出さない
 - タイトル画面にビルド番号・プライバシーポリシー・（EU など必要な地域では）広告の設定
 
-**本番の AdMob ID はリワード広告のユニット ID だけ未設定です。** アプリ ID（`android/app/src/main/res/values/strings.xml`）と全画面広告のユニット ID（`js/ads.js`）は本番のものが入っています。リワード広告のユニットを作ったら `js/ads.js` の `production.rewarded` を差し替えてください。差し替えるまでは Google Play 用のビルド（`ADMOB_MODE=production`）がエラーで止まるようにしています。動作確認用 APK は、これまでどおりテスト広告を表示します。
+**AdMob は本番の ID が入っています。** アプリ ID は `android/app/src/main/res/values/strings.xml`、全画面広告とリワード広告のユニット ID は `js/ads.js` の `production` にあります。Google Play 用のビルド（`ADMOB_MODE=production`）だけが本番の広告を出し、動作確認用 APK はテスト広告を表示します（ID が未設定のまま Google Play 用にビルドするとエラーで止まります）。
 
 ## ライセンス
 
