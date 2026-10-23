@@ -24,6 +24,7 @@
 - 武将を討つと兵糧（おにぎり）を落とし、配下の兵は潰走します。
 - 画面端の矢印は最寄りの武将の方角、右下のミニマップは全武将の位置（紫=西軍、青=東軍）。
 - 結果画面では討死の場所・称号・戦果を X / LINE / Facebook で共有できます。
+- 日本語と英語に対応しています（英語名は「Kobayakawa: Lone Samurai」）。
 
 ## 戦場の再現
 
@@ -33,7 +34,8 @@
 ## ファイル構成
 
 - `index.html` / `style.css` — 画面と UI
-- `js/data.js` — 地形・河川・街道・地名・布陣データ
+- `js/i18n.js` — 日本語・英語の文言（端末の言語が日本語なら日本語、それ以外は英語。タイトル画面で切り替え可）
+- `js/data.js` — 地形・河川・街道・地名・布陣データ（英語名つき）
 - `js/terrain.js` — 標高グリッドと地形画像の生成
 - `js/audio.js` — WebAudio による効果音（鬨の声・法螺貝・太鼓など）
 - `js/game.js` — ゲーム本体
@@ -43,7 +45,7 @@
 
 ## Android アプリ
 
-Capacitor 8 で Android アプリにしています（パッケージ名 `jp.techgym.kobayakawa`、横画面）。ゲームのファイルはアプリに同梱するので、オフラインでも遊べます（フォントだけはオフラインだと端末の明朝体になります）。
+Capacitor 8 で Android アプリにしています（パッケージ名 `jp.techgym.kobayakawa`、横画面）。ホーム画面のアプリ名は、端末が日本語なら「孤軍奮闘小早川」、それ以外は「Kobayakawa」です。ゲームのファイルはアプリに同梱するので、オフラインでも遊べます（フォントだけはオフラインだと端末の明朝体になります）。
 
 - `npm ci` → `npm run build`（`www/` に Web ファイルをコピー）→ `npx cap sync android` → `cd android && ./gradlew assembleDebug`
 - GitHub Actions（`.github/workflows/android.yml`）が push のたびに動作確認用 APK（デバッグ署名・テスト広告）を作ります。既定ブランチのビルドは Release `android-latest` に載り、

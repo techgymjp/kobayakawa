@@ -101,14 +101,14 @@ function makeEnemy(u, type, x, y) {
 // ---------------- イベント ----------------
 function makeEvents() {
   return [
-    { t: 0.2, f: () => msg('慶長五年九月十五日　正午　松尾山', 'sys', 5) },
-    { t: 2.4, f: () => msg('小早川秀秋、東軍への寝返りを決す——', 'sys', 5) },
-    { t: 5.0, f: () => { msg('されど、その企て、石田方に露見せり！', 'warn', 5); Sfx.horn(0.45); lastHornT = G.t; Sfx.swell(0.9); G.shake = 6; activateNear('W', 1050); } },
-    { t: 8.5, f: () => { msg('石田三成「金吾め、やはり裏切ったか！ 討ち取れぃ！」', 'say', 6); unitHorn(G.units.find((u) => u.name === '石田三成'), true); } },
-    { t: 12, f: () => msg('四方は敵ばかり……斬って、駆けて、生き延びよ！', 'sys', 5) },
-    { t: 34, f: () => { msg('ドドーン！　家康の「問鉄砲」が松尾山に撃ちかけられた！', 'warn', 6); Sfx.gun(0.9); setTimeout(() => Sfx.gun(0.8), 180); setTimeout(() => Sfx.gun(0.9), 420); G.shake = 10; flashScreen('rgba(255,240,200,0.5)'); } },
-    { t: 37, f: () => { msg('徳川家康「あの小倅、いつまで迷うておる！ 構わぬ、攻め潰せ！」', 'say', 7); Sfx.horn(0.45, 0.3, 0.9, [0.6, 0.6, 0.6, 2.0]); lastHornT = G.t; Sfx.swell(1); G.eastAwake = true; G.nextEastAct = G.t + 2; activateNear('E', 700); } },
-    { t: 42, f: () => msg('東西両軍、ことごとく敵となる。孤立無援——', 'sys', 5) },
+    { t: 0.2, f: () => msg(t('ev.0'), 'sys', 5) },
+    { t: 2.4, f: () => msg(t('ev.1'), 'sys', 5) },
+    { t: 5.0, f: () => { msg(t('ev.2'), 'warn', 5); Sfx.horn(0.45); lastHornT = G.t; Sfx.swell(0.9); G.shake = 6; activateNear('W', 1050); } },
+    { t: 8.5, f: () => { msg(t('ev.3'), 'say', 6); unitHorn(G.units.find((u) => u.name === '石田三成'), true); } },
+    { t: 12, f: () => msg(t('ev.4'), 'sys', 5) },
+    { t: 34, f: () => { msg(t('ev.5'), 'warn', 6); Sfx.gun(0.9); setTimeout(() => Sfx.gun(0.8), 180); setTimeout(() => Sfx.gun(0.9), 420); G.shake = 10; flashScreen('rgba(255,240,200,0.5)'); } },
+    { t: 37, f: () => { msg(t('ev.6'), 'say', 7); Sfx.horn(0.45, 0.3, 0.9, [0.6, 0.6, 0.6, 2.0]); lastHornT = G.t; Sfx.swell(1); G.eastAwake = true; G.nextEastAct = G.t + 2; activateNear('E', 700); } },
+    { t: 42, f: () => msg(t('ev.7'), 'sys', 5) },
   ];
 }
 
@@ -118,7 +118,7 @@ function activateUnit(u, quiet) {
   if (u.gen.alive) u.gen.state = 'chase';
   for (const s of u.soldiers) if (s.alive && s.state === 'hold') s.state = 'chase';
   if (!quiet) {
-    msg(`${u.side === 'W' ? '【西軍】' : '【東軍】'}${u.name}隊、攻め寄せる！`, u.side === 'W' ? 'w' : 'e', 4);
+    msg(t(u.side === 'W' ? 'msg.attackW' : 'msg.attackE', { name: I18N.name(u) }), u.side === 'W' ? 'w' : 'e', 4);
     unitHorn(u);
   }
 }
@@ -377,7 +377,7 @@ function doSword() {
     if (d < range + 10 && (spin || Math.abs(angDiff(Math.atan2(dy, dx), a)) < arc)) {
       b.life = 0; Sfx.clang();
       spark(b.x, b.y, '#fff6c0', 8);
-      addFloat(b.x, b.y - 10, '弾', '#fff6c0');
+      addFloat(b.x, b.y - 10, t('fx.parry'), '#fff6c0');
     }
   }
 }
@@ -425,7 +425,7 @@ function playerDie() {
   G.endT = 0;
   blood(P.x, P.y - 20, 40);
   Sfx.dirge();
-  banner('小早川秀秋、討死', deathPlace());
+  banner(t('ban.dead'), deathPlace());
 }
 
 // ---------------- 敵 ----------------
@@ -463,13 +463,13 @@ function killEnemy(e) {
     for (const s of u.soldiers) if (s.alive) { s.state = 'rout'; s.routT = rand(3, 6); }
     if (u.ieyasu) {
       G.ieyasuDead = true;
-      banner('徳川家康、討ち取ったり！', '……されど戦は終わらぬ。東軍の諸将、なお健在なり');
-      msg('東軍諸将「大御所の仇じゃ！ 小早川を逃がすな！」', 'say', 6);
+      banner(t('ban.ieyasu'), t('ban.ieyasuSub'));
+      msg(t('msg.avenge'), 'say', 6);
       for (const v of G.units) if (v.side === 'E' && !v.dead) { activateUnit(v, true); v.enraged = true; }
     } else {
-      banner(`${u.name}、討ち取ったり！`, `残る武将 ${TOTAL_GENERALS - G.killed.length}`);
+      banner(t('ban.kill', { name: I18N.name(u) }), t('ban.killSub', { n: TOTAL_GENERALS - G.killed.length }));
     }
-    msg(`${u.name} を討ち取った！（${G.killed.length}/${TOTAL_GENERALS}）`, 'kill', 5);
+    msg(t('msg.killed', { name: I18N.name(u), k: G.killed.length, t: TOTAL_GENERALS }), 'kill', 5);
     if (G.killed.length >= TOTAL_GENERALS) gameClear();
   } else {
     u.alive--;
@@ -594,7 +594,7 @@ function updateGeneral(e, dt, d, ux, uy, sm) {
   if (u.ieyasu) desired = ratio < 0.25 ? 0 : 240;
   if (u.brave && d > 110 && d < 300 && e.chargeCd <= 0) {
     e.charge = 0.55; e.chargeT = 0.7; e.chargeA = Math.atan2(uy, ux);
-    addFloat(e.x, e.y - 60, '突撃！', '#ff7b5a');
+    addFloat(e.x, e.y - 60, t('fx.charge'), '#ff7b5a');
     return;
   }
   if (d < e.r + P.r + e.reach && e.cd <= 0) { e.atkT = e.windup; return; }
@@ -764,7 +764,7 @@ function gameClear() {
   G.state = 'clearing';
   G.endT = 0;
   Sfx.fanfare();
-  setTimeout(() => banner('孤軍奮闘、ここに成れり', '関ヶ原の諸将、ことごとく討ち果たす'), 900);
+  setTimeout(() => banner(t('ban.clear'), t('ban.clearSub')), 900);
 }
 
 function deathPlace() {
@@ -781,12 +781,12 @@ function deathPlace() {
       const d = distSeg(P.x, P.y, r.pts[i][0], r.pts[i][1], r.pts[i + 1][0], r.pts[i + 1][1]);
       if (d < rd) { rd = d; rb = r; }
     }
-    return `${rb.name}の流れにて`;
+    return t('place.river', { p: I18N.name(rb) });
   }
   const h = heightAt(P.x, P.y);
-  if (best.kind === 'mt') return bd < 260 && h > 15 ? `${best.name}の山中にて` : `${best.name}の麓にて`;
-  if (bd < 220) return `${best.name}にて`;
-  return `${best.name}近くの野にて`;
+  const p = I18N.name(best);
+  if (best.kind === 'mt') return t(bd < 260 && h > 15 ? 'place.mtIn' : 'place.mtFoot', { p });
+  return t(bd < 220 ? 'place.at' : 'place.near', { p });
 }
 
 // ---------------- 描画 ----------------
@@ -866,7 +866,8 @@ function draw() {
     ctx.font = `${l.kind === 'mt' ? 700 : 500} ${l.kind === 'mt' ? 22 : 16}px "Shippori Mincho", serif`;
     ctx.lineWidth = 4; ctx.strokeStyle = 'rgba(255,250,235,0.55)';
     ctx.fillStyle = l.kind === 'rv' ? 'rgba(20,60,110,0.75)' : l.kind === 'rd' ? 'rgba(90,60,20,0.75)' : 'rgba(30,25,20,0.72)';
-    ctx.strokeText(l.name, x, y); ctx.fillText(l.name, x, y);
+    const ln = mapLabel(l);
+    ctx.strokeText(ln, x, y); ctx.fillText(ln, x, y);
   }
   // 浮き文字
   for (const f of G.floats) {
@@ -885,21 +886,28 @@ function draw() {
     const [x, y] = toS(e.x, e.y - 74);
     const fs = u.boss ? 15 : 13;
     ctx.font = `700 ${fs}px "Shippori Mincho", serif`;
-    const w = ctx.measureText(u.name).width + 14;
+    const un = I18N.name(u);
+    const w = ctx.measureText(un).width + 14;
     ctx.fillStyle = u.side === 'W' ? 'rgba(70,30,80,0.82)' : 'rgba(20,40,90,0.82)';
     roundRect(x - w / 2, y - 11, w, 22, 4); ctx.fill();
     ctx.strokeStyle = u.boss ? '#e8c060' : 'rgba(255,255,255,0.35)'; ctx.lineWidth = 1; ctx.stroke();
-    ctx.fillStyle = '#fff'; ctx.fillText(u.name, x, y + 1);
+    ctx.fillStyle = '#fff'; ctx.fillText(un, x, y + 1);
     // 体力
     const bw = Math.max(46, w - 10);
     ctx.fillStyle = 'rgba(0,0,0,0.6)'; ctx.fillRect(x - bw / 2, y + 13, bw, 4);
     ctx.fillStyle = '#e8c060'; ctx.fillRect(x - bw / 2, y + 13, bw * clamp(e.hp / e.maxHp, 0, 1), 4);
-    if (u.side === 'W') { ctx.fillStyle = '#c9a0e0'; ctx.font = '500 10px sans-serif'; ctx.fillText('西', x - w / 2 - 8, y + 1); }
-    else { ctx.fillStyle = '#9cc0ff'; ctx.font = '500 10px sans-serif'; ctx.fillText('東', x - w / 2 - 8, y + 1); }
+    if (u.side === 'W') { ctx.fillStyle = '#c9a0e0'; ctx.font = '500 10px sans-serif'; ctx.fillText(t('side.W'), x - w / 2 - 8, y + 1); }
+    else { ctx.fillStyle = '#9cc0ff'; ctx.font = '500 10px sans-serif'; ctx.fillText(t('side.E'), x - w / 2 - 8, y + 1); }
   }
   // 画面外の最寄り武将を示す矢印
   if (G.state === 'play') drawPointer(toS);
   drawMinimap();
+}
+
+// 地図に出す地名（英語の「the 〜」は外して先頭を大文字に）
+function mapLabel(l) {
+  const n = I18N.name(l).replace(/^the /, '');
+  return n.charAt(0).toUpperCase() + n.slice(1);
 }
 
 function roundRect(x, y, w, h, r) {
@@ -933,7 +941,7 @@ function drawPointer(toS) {
   ctx.font = '700 12px "Shippori Mincho", serif';
   ctx.fillStyle = '#fff'; ctx.strokeStyle = 'rgba(0,0,0,0.8)'; ctx.lineWidth = 3;
   const lx = ax - Math.cos(a) * 34, ly = ay - Math.sin(a) * 22;
-  const label = `${best.name} ${Math.round(bd / 10) * 10}m`;
+  const label = `${I18N.name(best)} ${Math.round(bd / 10) * 10}m`;
   ctx.strokeText(label, lx, ly); ctx.fillText(label, lx, ly);
 }
 
@@ -1117,7 +1125,7 @@ function drawPlayer() {
   }
   ctx.globalAlpha = 1;
   // スタミナ切れ表示
-  if (P.dashing && P.st < 20) { ctx.fillStyle = 'rgba(255,220,120,0.8)'; ctx.font = '700 8px serif'; ctx.textAlign = 'center'; ctx.fillText('息切れ', x, y - 72); }
+  if (P.dashing && P.st < 20) { ctx.fillStyle = 'rgba(255,220,120,0.8)'; ctx.font = '700 8px serif'; ctx.textAlign = 'center'; ctx.fillText(t('fx.winded'), x, y - 72); }
 }
 
 function drawSpear(x, y, a, L, back) {
@@ -1308,12 +1316,8 @@ function togglePause() {
 }
 
 function titleFor(clear, n) {
-  if (clear) return { t: '天下無双・孤軍の覇者', j: '討ちも討ったり関ヶ原　松尾の風に名を残す' };
-  if (n >= 30) return { t: '鬼金吾', j: '鬼と呼ばれて本望なり　裏切り者の名は血に洗う' };
-  if (n >= 20) return { t: '関ヶ原の修羅', j: '東も西もなかりけり　ただ一騎にて駆け抜けし' };
-  if (n >= 10) return { t: '松尾山の荒武者', j: '迷いし心は捨てにけり　槍一筋に生きた午後' };
-  if (n >= 3) return { t: '意地の一騎駆け', j: '寝返りの汚名を晴らさんと　赤き鎧で駆けにけり' };
-  return { t: '裏切り者の末路', j: '迷うてばかりの十九年　死に場所だけは選べたか' };
+  const k = clear ? 'clear' : n >= 30 ? '30' : n >= 20 ? '20' : n >= 10 ? '10' : n >= 3 ? '3' : '0';
+  return { t: t('rank.' + k), j: t('jisei.' + k) };
 }
 
 let lastShare = '';
@@ -1324,26 +1328,34 @@ function showResult(clear) {
   document.body.classList.remove('playing');
   const n = G.killed.length;
   const tt = titleFor(clear, n);
-  const place = clear ? '関ヶ原の野にて、ただ一人立つ' : `${deathPlace()}討死`;
-  $('rHead').textContent = clear ? '孤軍奮闘、成れり' : '討　死';
+  const dp = deathPlace();
+  const place = clear ? t('res.placeClear') : t('res.placeDead', { p: dp });
+  $('rHead').textContent = t(clear ? 'res.clear' : 'res.dead');
   $('rHead').classList.toggle('clear', clear);
   $('rPlace').textContent = place;
-  $('rTitle').textContent = `【${tt.t}】`;
+  $('rTitle').textContent = t('res.rank', { r: tt.t });
   $('rJisei').textContent = tt.j;
   $('rGen').textContent = `${n} / ${TOTAL_GENERALS}`;
   $('rSol').textContent = `${G.soldierKills}`;
   $('rTime').textContent = fmtTime(G.t);
-  $('rIeyasu').textContent = G.ieyasuDead ? '討ち取った（されど戦は終わらず）' : '健在';
+  $('rIeyasu').textContent = t(G.ieyasuDead ? 'res.ieyasuDead' : 'res.ieyasuAlive');
   const list = $('rList');
   list.innerHTML = '';
   for (const u of G.units) {
     const el = document.createElement('span');
     const dead = G.killed.includes(u.name);
     el.className = 'chip ' + (u.side === 'W' ? 'w' : 'e') + (dead ? ' dead' : '');
-    el.textContent = u.name;
+    el.textContent = I18N.name(u);
     list.appendChild(el);
   }
-  lastShare = `『孤軍奮闘小早川』\n${clear ? `小早川秀秋、関ヶ原の全武将${TOTAL_GENERALS}人を討ち果たす！` : `小早川秀秋、${place}。`}\n討ち取った武将 ${n}/${TOTAL_GENERALS}・斬った兵 ${G.soldierKills}・奮戦 ${fmtTime(G.t)}\n${G.ieyasuDead ? '家康を討つも、戦は終わらず。\n' : ''}称号【${tt.t}】\n#孤軍奮闘小早川 #関ヶ原`;
+  lastShare = [
+    t('share.head'),
+    clear ? t('share.clear', { t: TOTAL_GENERALS }) : t('share.dead', { p: dp }),
+    t('share.stats', { n, t: TOTAL_GENERALS, s: G.soldierKills, time: fmtTime(G.t) }),
+    ...(G.ieyasuDead ? [t('share.ieyasu')] : []),
+    t('share.rank', { r: tt.t }),
+    t('share.tags'),
+  ].join('\n');
   show('result', true);
 }
 
@@ -1368,18 +1380,24 @@ $('shareNative').addEventListener('click', async () => {
   const text = lastShare + '\n' + shareUrl();
   // アプリでは Android の共有メニューを出す
   if (plugin('Share')) {
-    try { await plugin('Share').share({ title: '孤軍奮闘小早川', text: lastShare, url: shareUrl(), dialogTitle: '戦果を共有' }); } catch (_) { /* キャンセル */ }
+    try { await plugin('Share').share({ title: t('share.title'), text: lastShare, url: shareUrl(), dialogTitle: t('share.dialog') }); } catch (_) { /* キャンセル */ }
     return;
   }
   if (navigator.share) {
-    try { await navigator.share({ title: '孤軍奮闘小早川', text: lastShare, url: shareUrl() }); } catch (_) { /* キャンセル */ }
+    try { await navigator.share({ title: t('share.title'), text: lastShare, url: shareUrl() }); } catch (_) { /* キャンセル */ }
     return;
   }
-  try { await navigator.clipboard.writeText(text); $('shareNative').textContent = 'コピーしました'; }
-  catch (_) { window.prompt('コピーしてください', text); }
-  setTimeout(() => { $('shareNative').textContent = '結果をコピー'; }, 2000);
+  try { await navigator.clipboard.writeText(text); $('shareNative').textContent = t('share.copied'); }
+  catch (_) { window.prompt(t('share.prompt'), text); }
+  setTimeout(updateShareLabel, 2000);
 });
-if (!navigator.share && !plugin('Share')) $('shareNative').textContent = '結果をコピー';
+function updateShareLabel() { $('shareNative').textContent = t(!navigator.share && !plugin('Share') ? 'share.copy' : 'share.native'); }
+function updateMuteLabel() { $('btnMute').textContent = t(Sfx.muted ? 'sound.off' : 'sound.on'); }
+// 言語を切り替えたら、HTML に書いていない文言も書き換える
+function applyLang() { I18N.apply(); updateShareLabel(); updateMuteLabel(); }
+I18N.onChange(() => { updateShareLabel(); updateMuteLabel(); });
+document.querySelectorAll('[data-lang]').forEach((b) => b.addEventListener('click', () => I18N.setLang(b.dataset.lang)));
+applyLang();
 $('btnStart').addEventListener('click', startGame);
 // 2 回に 1 回、「再び出陣」の前に全画面広告を出す（Android アプリのみ）
 let gameOvers = 0, retryBusy = false;
@@ -1396,7 +1414,7 @@ $('btnRetry').addEventListener('click', async () => {
 });
 $('btnTitle').addEventListener('click', () => { show('result', false); show('title', true); titleScene(); });
 $('btnResume').addEventListener('click', togglePause);
-$('btnMute').addEventListener('click', () => { Sfx.init(); $('btnMute').textContent = Sfx.toggle() ? '音：切' : '音：入'; });
+$('btnMute').addEventListener('click', () => { Sfx.init(); Sfx.toggle(); updateMuteLabel(); });
 $('btnPause').addEventListener('click', () => { if (G && (G.state === 'play' || G.state === 'pause')) togglePause(); });
 
 // ---------------- リワード広告で復活（Android アプリのみ・1 合戦 1 回） ----------------
@@ -1405,7 +1423,7 @@ function canContinue() { return !G.continued && Ads.available; }
 function showContinue() {
   G.state = 'continue'; G.contT = 10; contBusy = false;
   $('contWatch').disabled = false;
-  $('contWatch').textContent = '広告を見て復活する';
+  $('contWatch').textContent = t('cont.watch');
   $('contNote').textContent = '';
   $('contTime').textContent = '10';
   show('hud', false);
@@ -1422,11 +1440,11 @@ $('contWatch').addEventListener('click', async () => {
   if (G.state !== 'continue' || contBusy) return;
   contBusy = true;
   $('contWatch').disabled = true;
-  $('contWatch').textContent = '広告を読み込み中……';
+  $('contWatch').textContent = t('cont.loading');
   const result = await Ads.showRewarded();
   if (G.state !== 'continue') return;
   if (result === 'unavailable') {
-    $('contNote').textContent = '広告を読み込めませんでした';
+    $('contNote').textContent = t('cont.fail');
     setTimeout(giveUp, 2200);
     return;
   }
@@ -1447,7 +1465,7 @@ function revive() {
   G.bullets = [];
   G.state = 'play';
   show('hud', true);
-  banner('小早川秀秋、再起！', 'まだ死に場所はここではない');
+  banner(t('ban.revive'), t('ban.reviveSub'));
   Sfx.horn(0.45); Sfx.swell(1);
 }
 
@@ -1511,10 +1529,10 @@ function frame(ts) {
 
 async function boot() {
   const lt = $('loadtext');
-  lt.textContent = '関ヶ原の地形を測量中……';
+  lt.textContent = t('load.terrain');
   await new Promise((r) => setTimeout(r, 30));
   buildGrids();
-  lt.textContent = '野山を描いております……';
+  lt.textContent = t('load.paint');
   await new Promise((r) => setTimeout(r, 30));
   terrainImg = buildTerrainImage();
   miniBg = buildMiniBg();

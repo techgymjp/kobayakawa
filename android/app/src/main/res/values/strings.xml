@@ -1,7 +1,7 @@
 <?xml version='1.0' encoding='utf-8'?>
 <resources>
-    <string name="app_name">孤軍奮闘小早川</string>
-    <string name="title_activity_main">孤軍奮闘小早川</string>
+    <string name="app_name">Kobayakawa</string>
+    <string name="title_activity_main">Kobayakawa</string>
     <string name="package_name">jp.techgym.kobayakawa</string>
     <string name="custom_url_scheme">jp.techgym.kobayakawa</string>
     <string name="admob_app_id">ca-app-pub-6411535997477460~8620104811</string>

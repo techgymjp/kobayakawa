@@ -80,6 +80,7 @@ Play Console の「ストアの掲載情報」に貼り付けて使います。�
 
 ■ その他
 ・左のスティックで移動、右のボタンで刀・槍・ダッシュのかんたん操作
+・日本語・英語対応
 ・オフラインでも遊べる（広告・シェアは通信が必要）
 
 裏切り者の汚名を背負った十九歳の若武者は、どこで果てるのか。
@@ -92,6 +93,78 @@ Play Console の「ストアの掲載情報」に貼り付けて使います。�
 <ja-JP>
 はじめてのリリースです。
 </ja-JP>
+<en-US>
+First release.
+</en-US>
+```
+
+---
+
+## English
+
+**App name** (max 30 characters)
+
+```
+Kobayakawa: Lone Samurai
+```
+
+**Short description** (max 80 characters)
+
+```
+Betrayal exposed! Both armies hunt you. Slay every general at Sekigahara!
+```
+
+**Full description**
+
+```
+Noon, October 21, 1600. Mt. Matsuo, Sekigahara.
+
+The young warlord Kobayakawa Hideaki has decided to betray the Western Army and join the East.
+But Ishida Mitsunari's side has discovered the plot, and the Western troops below come storming up the mountain.
+Out of patience, Tokugawa Ieyasu fires a warning volley — and the Eastern Army turns on Kobayakawa too.
+
+East and West, everyone is your enemy. You stand alone.
+Ride out as a samurai in crimson armor: cut, gallop, and survive the battle that decided Japan.
+
+■ THE REAL SEKIGAHARA
+• A battlefield built from the actual terrain: Mt. Sasao, Mt. Tenma, Mt. Matsuo, Mt. Nangu, the Fujiko River, the Nakasendō road and more
+• 41 named generals on both sides, placed as they stood at noon — Ishida Mitsunari, Shimazu Yoshihiro, Ōtani Yoshitsugu, Ukita Hideie, Tokugawa Ieyasu, Honda Tadakatsu, Ii Naomasa, Fukushima Masanori…
+• Your horse slows on hills and in rivers
+
+■ SWORD, SPEAR AND A FAST HORSE
+• Sword: quick slashes — every third swing becomes a spin attack, and it can deflect bullets
+• Spear: a long, piercing thrust — thrust while dashing for a devastating charge
+• Dash: gallop through enemy lines and trample foot soldiers; when surrounded, ride for your life
+
+■ SLAYING IEYASU DOES NOT END THE BATTLE
+• You win only by slaying every general at Sekigahara
+• Kill Tokugawa Ieyasu and his enraged generals come after you even harder
+• This is a battle to find where you will die
+
+■ THE SOUNDS OF WAR
+• Battle cries that swell as the enemy closes in
+• Conch horns and war drums echoing from camps across the field
+
+■ HOW WILL YOU FALL?
+• "Fell on Mt. Matsuo" — the place of your last stand and your battle record are saved
+• Earn a rank and a death poem based on how many generals you slew
+• Share your result with friends
+
+■ FEATURES
+• Simple touch controls: stick on the left, sword, spear and dash buttons on the right
+• English and Japanese
+• Plays offline (ads and sharing need a connection)
+
+Where will the nineteen-year-old branded a traitor make his last stand?
+Ride out.
+```
+
+**Release notes** (first release)
+
+```
+<en-US>
+First release.
+</en-US>
 ```
 
 ---

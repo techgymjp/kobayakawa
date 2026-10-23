@@ -197,3 +197,26 @@ body.native .share { grid-template-columns: 1fr; }
   body.touch #minimap { width: 120px; height: 90px; top: 8px; right: 140px; }
   body.touch #tbtns { transform: scale(.85); transform-origin: right bottom; }
 }
+
+/* ---- 言語 ---- */
+.title-sub:empty { display: none; }
+.title-sub { margin: -10px 0 14px; font-weight: 800; letter-spacing: .25em; color: var(--gold); font-size: clamp(14px, 2.6vw, 20px); text-shadow: 0 2px 6px #000; }
+.lang-sel { margin-top: 12px; display: flex; gap: 8px; justify-content: center; }
+.lang-btn { font-family: var(--mincho); font-size: 14px; padding: 5px 16px; border-radius: 16px; cursor: pointer; color: #fff; background: rgba(0,0,0,.45); border: 1px solid rgba(255,255,255,.35); }
+.lang-btn.on { background: rgba(192,22,27,.85); border-color: #f0a090; font-weight: 700; }
+body.lang-en .tbtn { font-size: 13px; letter-spacing: .02em; }
+body.lang-en .tbtn.dash { font-size: 12px; }
+body.lang-en .weap span { font-size: 11px; }
+body.lang-en #rHead { letter-spacing: .06em; font-family: var(--mincho); font-weight: 800; }
+body.lang-en .pre, body.lang-en .r-pre { letter-spacing: .12em; }
+body.lang-en .story { font-size: 14px; line-height: 1.6; }
+body.lang-en .b-main { font-family: var(--mincho); font-weight: 800; letter-spacing: .02em; font-size: clamp(24px, 4.6vw, 46px); }
+body.lang-en .r-jisei { font-family: var(--mincho); font-style: italic; letter-spacing: 0; }
+body.lang-en .title-inner { padding-top: 8px; }
+@media (max-height: 500px) {
+  .lang-sel { margin-top: 6px; }
+  .lang-btn { font-size: 12px; padding: 3px 12px; }
+  .title-sub { margin: -4px 0 6px; font-size: 13px; }
+  body.lang-en .story { font-size: 12px; line-height: 1.5; }
+}
+body.lang-en .chip.dead::before { content: "✕ "; }

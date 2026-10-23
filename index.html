@@ -23,24 +23,24 @@
 <!-- HUD -->
 <div id="hud" class="hidden">
   <div class="hud-left">
-    <div class="pname"><span class="mon">鎌</span>小早川秀秋 <small>赤備え</small></div>
-    <div class="bar"><div id="hpbar" class="fill hp"></div><span class="lbl">体力 <b id="hpnum">300</b></span></div>
-    <div class="bar sm"><div id="stbar" class="fill st"></div><span class="lbl">駆</span></div>
-    <div class="weap"><span id="cdSword">刀</span><span id="cdSpear">槍</span></div>
+    <div class="pname"><span class="mon">鎌</span><span data-i18n-html="hud.name">小早川秀秋 <small>赤備え</small></span></div>
+    <div class="bar"><div id="hpbar" class="fill hp"></div><span class="lbl"><span data-i18n="hud.hp">体力</span> <b id="hpnum">300</b></span></div>
+    <div class="bar sm"><div id="stbar" class="fill st"></div><span class="lbl" data-i18n="hud.dash">駆</span></div>
+    <div class="weap"><span id="cdSword" data-i18n="hud.sword">刀</span><span id="cdSpear" data-i18n="hud.spear">槍</span></div>
   </div>
   <div class="hud-right">
-    <div>討取武将 <b id="kGen">0 / 41</b></div>
-    <div>斬った兵 <b id="kSol">0</b></div>
-    <div>奮戦 <b id="time">0:00</b></div>
-    <div class="hud-btns"><button id="btnPause" class="mini-btn">止</button></div>
+    <div><span data-i18n="hud.gens">討取武将</span> <b id="kGen">0 / 41</b></div>
+    <div><span data-i18n="hud.sols">斬った兵</span> <b id="kSol">0</b></div>
+    <div><span data-i18n="hud.time">奮戦</span> <b id="time">0:00</b></div>
+    <div class="hud-btns"><button id="btnPause" class="mini-btn" data-i18n="hud.pause">止</button></div>
   </div>
   <canvas id="minimap" width="240" height="180"></canvas>
   <div id="joyzone"></div>
   <div id="joybase"><div id="joyknob"></div></div>
   <div id="tbtns">
-    <button id="btnSpear" class="tbtn spear">槍</button>
-    <button id="btnSword" class="tbtn sword">刀</button>
-    <button id="btnDash" class="tbtn dash">駆</button>
+    <button id="btnSpear" class="tbtn spear" data-i18n="tb.spear">槍</button>
+    <button id="btnSword" class="tbtn sword" data-i18n="tb.sword">刀</button>
+    <button id="btnDash" class="tbtn dash" data-i18n="tb.dash">駆</button>
   </div>
 </div>
 <div id="msgs"></div>
@@ -48,36 +48,38 @@
 
 <!-- 読み込み -->
 <div id="loading" class="screen">
-  <div class="load-inner"><div class="spinner"></div><div id="loadtext">読み込み中……</div></div>
+  <div class="load-inner"><div class="spinner"></div><div id="loadtext" data-i18n="load.default">読み込み中……</div></div>
 </div>
 
 <!-- タイトル -->
 <div id="title" class="screen hidden">
   <div class="title-inner">
-    <div class="pre">慶長五年九月十五日　関ヶ原</div>
+    <div class="pre" data-i18n="title.pre">慶長五年九月十五日　関ヶ原</div>
     <h1>孤軍奮闘<br class="br-sp">小早川</h1>
-    <div class="story">
+    <div class="title-sub" data-i18n="title.sub"></div>
+    <div class="story" data-i18n-html="title.story">
       <p>松尾山に陣取る小早川秀秋、東軍への寝返りを決す。</p>
       <p>されどその企ては石田方に露見し、眼下の西軍が押し寄せる。<br>しびれを切らした徳川方もまた、小早川を攻め始めた——。</p>
       <p>東も西も、すべてが敵。<b>赤備えの一騎</b>、斬って駆けて、関ヶ原の全武将を討ち果たせ。</p>
       <p class="note">※徳川家康を討っても、戦は終わらぬ。<br>これは、死に場所を見つける戦である。</p>
     </div>
-    <button id="btnStart" class="btn primary">出　陣</button>
+    <button id="btnStart" class="btn primary" data-i18n="title.start">出　陣</button>
+    <div class="lang-sel"><button class="lang-btn" data-lang="ja">日本語</button><button class="lang-btn" data-lang="en">English</button></div>
     <div class="controls">
       <div class="pc">
-        <div><kbd>W</kbd><kbd>A</kbd><kbd>S</kbd><kbd>D</kbd> / 矢印：移動</div>
-        <div><kbd>J</kbd> / 左クリック：刀（3連で回転斬り・弾丸を弾く）</div>
-        <div><kbd>K</kbd> / 右クリック：槍（駆けながら突けば突撃）</div>
-        <div><kbd>Space</kbd> / <kbd>Shift</kbd>：駆（ダッシュ・敵を蹴散らす）</div>
-        <div><kbd>P</kbd>：一時停止</div>
+        <div><kbd>W</kbd><kbd>A</kbd><kbd>S</kbd><kbd>D</kbd> / <span data-i18n="ctl.move">矢印：移動</span></div>
+        <div><kbd>J</kbd> / <span data-i18n="ctl.sword">左クリック：刀（3連で回転斬り・弾丸を弾く）</span></div>
+        <div><kbd>K</kbd> / <span data-i18n="ctl.spear">右クリック：槍（駆けながら突けば突撃）</span></div>
+        <div><kbd>Space</kbd> / <kbd>Shift</kbd>：<span data-i18n="ctl.dash">駆（ダッシュ・敵を蹴散らす）</span></div>
+        <div><kbd>P</kbd>：<span data-i18n="ctl.pause">一時停止</span></div>
       </div>
-      <div class="sp">左側をなぞって移動／右の「刀」「槍」で攻撃／「駆」長押しでダッシュ</div>
+      <div class="sp" data-i18n="ctl.touch">左側をなぞって移動／右の「刀」「槍」で攻撃／「駆」長押しでダッシュ</div>
     </div>
     <button id="btnMute" class="btn ghost small">音：入</button>
     <div class="legal">
       <span id="buildInfo"></span>
-      <a href="https://techgym.jp/privacy-policy/" target="_blank" rel="noopener">プライバシーポリシー</a>
-      <span id="adPrivacy" class="hidden">｜<a href="#" id="adPrivacyLink">広告の設定</a></span>
+      <a href="https://techgym.jp/privacy-policy/" data-i18n-href="url.privacy" target="_blank" rel="noopener" data-i18n="legal.privacy">プライバシーポリシー</a>
+      <span id="adPrivacy" class="hidden">｜<a href="#" id="adPrivacyLink" data-i18n="legal.adSettings">広告の設定</a></span>
     </div>
   </div>
 </div>
@@ -85,51 +87,52 @@
 <!-- 一時停止 -->
 <div id="pause" class="screen hidden">
   <div class="panel">
-    <h2>陣中休息</h2>
-    <button id="btnResume" class="btn primary">再び戦う</button>
+    <h2 data-i18n="pause.head">陣中休息</h2>
+    <button id="btnResume" class="btn primary" data-i18n="pause.resume">再び戦う</button>
   </div>
 </div>
 
 <!-- 復活（Android アプリのみ：リワード広告） -->
 <div id="continue" class="screen hidden">
   <div class="panel cont">
-    <h2>まだ死ねぬ……</h2>
-    <p>広告を見れば、一度だけ体力満タンで戦場に戻れる。</p>
+    <h2 data-i18n="cont.head">まだ死ねぬ……</h2>
+    <p data-i18n="cont.lead">広告を見れば、一度だけ体力満タンで戦場に戻れる。</p>
     <div id="contTime" class="cont-time">10</div>
     <button id="contWatch" class="btn primary">広告を見て復活する</button>
     <div id="contNote" class="cont-note"></div>
-    <button id="contGiveUp" class="btn ghost">ここを死に場所とする</button>
+    <button id="contGiveUp" class="btn ghost" data-i18n="cont.giveUp">ここを死に場所とする</button>
   </div>
 </div>
 
 <!-- 結果 -->
 <div id="result" class="screen hidden">
   <div class="panel result">
-    <div class="r-pre">孤軍奮闘小早川　戦果</div>
+    <div class="r-pre" data-i18n="res.pre">孤軍奮闘小早川　戦果</div>
     <h2 id="rHead">討　死</h2>
     <div id="rPlace" class="r-place"></div>
     <div id="rTitle" class="r-title"></div>
     <div id="rJisei" class="r-jisei"></div>
     <table class="r-stats">
-      <tr><th>討ち取った武将</th><td id="rGen"></td></tr>
-      <tr><th>斬った兵</th><td id="rSol"></td></tr>
-      <tr><th>奮戦時間</th><td id="rTime"></td></tr>
-      <tr><th>徳川家康</th><td id="rIeyasu"></td></tr>
+      <tr><th data-i18n="res.gens">討ち取った武将</th><td id="rGen"></td></tr>
+      <tr><th data-i18n="res.sols">斬った兵</th><td id="rSol"></td></tr>
+      <tr><th data-i18n="res.time">奮戦時間</th><td id="rTime"></td></tr>
+      <tr><th data-i18n="res.ieyasu">徳川家康</th><td id="rIeyasu"></td></tr>
     </table>
     <div id="rList" class="r-list"></div>
     <div class="share">
-      <button id="shareX" class="btn share-x">𝕏 でシェア</button>
-      <button id="shareLine" class="btn share-line">LINEで送る</button>
+      <button id="shareX" class="btn share-x" data-i18n="share.x">𝕏 でシェア</button>
+      <button id="shareLine" class="btn share-line" data-i18n="share.line">LINEで送る</button>
       <button id="shareFb" class="btn share-fb">Facebook</button>
       <button id="shareNative" class="btn share-native">共有する</button>
     </div>
     <div class="r-btns">
-      <button id="btnRetry" class="btn primary">再び出陣</button>
-      <button id="btnTitle" class="btn ghost">タイトルへ</button>
+      <button id="btnRetry" class="btn primary" data-i18n="res.retry">再び出陣</button>
+      <button id="btnTitle" class="btn ghost" data-i18n="res.title">タイトルへ</button>
     </div>
   </div>
 </div>
 
+<script src="js/i18n.js"></script>
 <script src="js/data.js"></script>
 <script src="js/terrain.js"></script>
 <script src="js/audio.js"></script>
