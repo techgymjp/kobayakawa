@@ -80,6 +80,18 @@ function armorColor(hex) {
   return hex;
 }
 
+// 難易度（ボットの自動プレイで調整：上手く立ち回れば勝てるが、普通に遊ぶと途中で討死する程度）
+const SPEAR_STAMINA = 14; // 槍 1 突きで使う駆
+const SPEAR_PIERCE = 2;   // 槍が貫く人数
+
+const DIFF = {
+  dmg: 1.2,       // 敵の攻撃力の倍率
+  genHp: 1.25,    // 武将の体力の倍率
+  genHeal: 50,    // 武将が落とす兵糧の回復量
+  dropRate: 0.05, // 足軽が兵糧を落とす確率
+  regen: 1.5,     // 自然回復（毎秒）
+};
+
 function makeEnemy(u, type, x, y) {
   const e = {
     u, type, x, y, hx: x, hy: y, alive: true, state: 'hold',
@@ -88,11 +100,11 @@ function makeEnemy(u, type, x, y) {
     routT: 0, charge: 0, chargeT: 0, chargeCd: rand(2, 4), chargeA: 0, wobble: rand(0, TAU), armor: armorColor(u.bg),
   };
   if (type === 'gen') {
-    e.r = 12; e.hp = e.maxHp = u.hp; e.speed = u.brave ? 125 : 110; e.dmg = u.pow; e.reach = 26; e.windup = 0.45;
+    e.r = 12; e.hp = e.maxHp = u.hp * DIFF.genHp; e.speed = u.brave ? 125 : 110; e.dmg = u.pow * DIFF.dmg; e.reach = 26; e.windup = 0.45;
   } else if (type === 'gun') {
-    e.r = 7; e.hp = e.maxHp = 24; e.speed = 74; e.dmg = 15; e.reach = 0; e.windup = 0.75;
+    e.r = 7; e.hp = e.maxHp = 24; e.speed = 74; e.dmg = 15 * DIFF.dmg; e.reach = 0; e.windup = 0.75;
   } else {
-    e.r = 7; e.hp = e.maxHp = 32; e.speed = rand(76, 90); e.dmg = 8; e.reach = 20; e.windup = 0.42;
+    e.r = 7; e.hp = e.maxHp = 32; e.speed = rand(76, 90); e.dmg = 8 * DIFF.dmg; e.reach = 20; e.windup = 0.42;
   }
   G.enemies.push(e);
   return e;
@@ -302,7 +314,7 @@ function updatePlayer(dt) {
   }
 
   // 自然回復
-  if (G.t - P.lastHurt > 4) P.hp = Math.min(P.maxHp, P.hp + 2 * dt);
+  if (G.t - P.lastHurt > 4) P.hp = Math.min(P.maxHp, P.hp + DIFF.regen * dt);
   if (P.inv > 0) P.inv -= dt;
   P.cdSword -= dt; P.cdSpear -= dt; P.comboT -= dt;
   if (P.comboT <= 0) P.combo = 0;
@@ -384,21 +396,32 @@ function doSword() {
 
 function doSpear() {
   const P = G.player;
+  // 槍は駆（スタミナ）を使う。突きまくるとダッシュできなくなる
+  if (P.st < SPEAR_STAMINA) {
+    P.cdSpear = 0.3;
+    addFloat(P.x, P.y - 60, t('fx.winded'), '#ffdc78');
+    return;
+  }
+  P.st -= SPEAR_STAMINA; P.stDelay = 0.6;
   const a = aimAngle();
   const charge = P.dashing && hypot(P.vx, P.vy) > 220;
   P.atk = { type: 'spear', t: 0, dur: 0.3, ang: a, charge };
-  P.cdSpear = charge ? 0.45 : 0.55;
+  P.cdSpear = charge ? 0.6 : 0.75;
   if (Math.cos(a) !== 0) P.fx = Math.cos(a) >= 0 ? 1 : -1;
   Sfx.thrust();
   const len = charge ? 135 : 110, half = charge ? 20 : 16, dmg = charge ? 85 : 58;
   const ca = Math.cos(a), sa = Math.sin(a);
+  // 槍が貫くのは手前から 2 人まで（群れには刀の方が効く）
+  const hits = [];
   for (const e of G.enemies) {
     if (!e.alive) continue;
     const dx = e.x - P.x, dy = e.y - P.y;
     const along = dx * ca + dy * sa, perp = Math.abs(-dx * sa + dy * ca);
     if (along < 0 || along > len + e.r || perp > half + e.r) continue;
-    damageEnemy(e, dmg, ca * 260, sa * 260, 'spear');
+    hits.push({ e, along });
   }
+  hits.sort((p, q) => p.along - q.along);
+  for (const h of hits.slice(0, SPEAR_PIERCE)) damageEnemy(h.e, dmg, ca * 260, sa * 260, 'spear');
 }
 
 function hurtPlayer(dmg, fromX, fromY) {
@@ -436,8 +459,8 @@ function damageEnemy(e, dmg, kx, ky, src) {
   e.flash = 0.12;
   const kb = e.type === 'gen' ? 0.35 : 1;
   e.kvx += kx * kb; e.kvy += ky * kb;
-  e.atkT = 0; e.aimT = 0; // 攻撃を潰す
-  if (e.type === 'gen') e.chargeT = 0;
+  // 足軽は斬られると攻撃が止まる。武将はひるまない
+  if (e.type !== 'gen') { e.atkT = 0; e.aimT = 0; }
   blood(e.x, e.y - 14, e.type === 'gen' ? 8 : 5);
   addFloat(e.x, e.y - 34, Math.round(dmg), src === 'spear' ? '#ffd24a' : '#ffffff');
   Sfx.hit();
@@ -458,7 +481,7 @@ function killEnemy(e) {
     Sfx.kill();
     Sfx.swell(u.ieyasu ? 1 : 0.7);
     G.shake = 14; G.hitstop = 0.18;
-    G.pickups.push({ x: e.x, y: e.y, heal: 80, t: 0, big: true });
+    G.pickups.push({ x: e.x, y: e.y, heal: DIFF.genHeal, t: 0, big: true });
     // 残兵は潰走
     for (const s of u.soldiers) if (s.alive) { s.state = 'rout'; s.routT = rand(3, 6); }
     if (u.ieyasu) {
@@ -474,7 +497,7 @@ function killEnemy(e) {
   } else {
     u.alive--;
     G.soldierKills++;
-    if (Math.random() < 0.07) G.pickups.push({ x: e.x, y: e.y, heal: 30, t: 0 });
+    if (Math.random() < DIFF.dropRate) G.pickups.push({ x: e.x, y: e.y, heal: 30, t: 0 });
   }
 }
 
@@ -1296,7 +1319,7 @@ function updateHUD() {
   $('kSol').textContent = G.soldierKills;
   $('time').textContent = fmtTime(G.t);
   $('cdSword').style.opacity = P.cdSword > 0 ? 0.45 : 1;
-  $('cdSpear').style.opacity = P.cdSpear > 0 ? 0.45 : 1;
+  $('cdSpear').style.opacity = P.cdSpear > 0 || P.st < SPEAR_STAMINA ? 0.45 : 1;
 }
 function fmtTime(t) { const m = Math.floor(t / 60), s = Math.floor(t % 60); return `${m}:${String(s).padStart(2, '0')}`; }
 
