@@ -23,7 +23,7 @@ const Ads = (() => {
       },
       // AdMob で iOS 用の広告ユニットを作ったら入れる（空のままでは App Store 用にビルドできない）
       production: {
-        interstitial: '',
+        interstitial: 'ca-app-pub-6411535997477460/4004739820',
         rewarded: '',
         banner: 'ca-app-pub-6411535997477460/3259554234',
       },
