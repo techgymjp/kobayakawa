@@ -222,7 +222,13 @@ base64 -i 証明書.p12 | tr -d '\n' | pbcopy
 base64 -i AuthKey_XXXXXXXXXX.p8 | tr -d '\n' | pbcopy
 ```
 
-登録が終わったら、Claude Code に「iOS の自動アップロードのワークフローを作って」と頼みます。
+登録済みです。`.github/workflows/ios-release.yml` が、`claude/intelligent-rubin-6c3t95` ブランチへの push のたびに（または Actions の画面の「Run workflow」で）次を行います。
+
+1. 本番の広告 ID でゲームのファイルをコピーする（`ios:release` と同じ）
+2. 証明書と API キーで署名して Archive する。Version は `package.json` の version、**Build は 100 + 実行回数**（Mac の Xcode から手で上げる 1、2… とぶつからないように）
+3. App Store Connect にアップロードする（10〜30 分ほどで TestFlight に出る）
+
+審査への提出は、これまでどおり App Store Connect で行います。
 
 **注意**：証明書（.p12）、そのパスワード、API キー（.p8）は、チャット・AI へのアップロード・リポジトリへのコミットで**絶対に共有しない**でください。
 
