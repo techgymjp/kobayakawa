@@ -29,7 +29,7 @@ JET STRIKE（techgymjp/jet-fighter）と同じ構成・同じ手順です。
    - アプリ ID と広告ユニット ID 3 つを Claude Code に渡す（`ios/App/App/Info.plist` の `GADApplicationIdentifier` と `js/ads.js` の `ios.production` に入れてもらう）
    - 「プライバシーとメッセージ」→「欧州の規制」のメッセージに iOS アプリも追加する
 
-**本番の ID が入るまでは `npm run ios:release` がエラーで止まります**（テスト広告のまま App Store に出さないため）。`npm run ios:sync`（テスト広告）は今すぐ使えます。
+iOS 用のアプリ ID（`ca-app-pub-6411535997477460~1194743654`）と広告ユニット ID 3 つは、設定済みです。
 
 ---
 

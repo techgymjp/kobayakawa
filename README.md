@@ -72,7 +72,7 @@ Android 版と同じ Capacitor で iOS アプリにしています（Bundle ID `
 - `npm run ios:sync`（テスト広告）／ `npm run ios:release`（本番広告。App Store 用）／ `npm run ios:open`
 - GitHub Actions（`.github/workflows/ios.yml`）が push のたびに、署名なしでビルドできるかを確認します
 - 広告は Android と同じ出し方で、iOS 用の広告ユニットを使います（`js/ads.js` の `ios`）。起動時に App Tracking Transparency の確認を出します
-- **iOS 用の AdMob ID はまだ入っていません。** アプリ ID（`ios/App/App/Info.plist` の `GADApplicationIdentifier`）と広告ユニット ID 3 つ（`js/ads.js` の `ios.production`）を入れるまで、`npm run ios:release` はエラーで止まります
+- iOS 用の AdMob ID は本番のものが入っています。アプリ ID は `ios/App/App/Info.plist` の `GADApplicationIdentifier`、広告ユニット ID 3 つは `js/ads.js` の `ios.production`
 - App Store 用の画像は `docs/store/ios/`（スクリーンショット 2622 × 1206 日英各 4 枚、ヘッダ 3840 × 1646、検索結果 3840 × 2560）
 
 ## ライセンス
