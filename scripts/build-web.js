@@ -11,12 +11,18 @@ for (const item of ['index.html', 'style.css', 'js']) {
 }
 // Google Play 用のビルドでは本番の広告を使う
 const mode = process.env.ADMOB_MODE === 'production' ? 'production' : 'test';
-// 本番の広告 ID を入れ忘れたまま Google Play 用にビルドしないようにする
+// 本番の広告 ID を入れ忘れたままストア用にビルドしないようにする（ADMOB_PLATFORM=ios なら iOS を確認）
 if (mode === 'production') {
+  const platform = process.env.ADMOB_PLATFORM === 'ios' ? 'ios' : 'android';
   const ads = fs.readFileSync(path.join(root, 'js', 'ads.js'), 'utf8');
-  const strings = fs.readFileSync(path.join(root, 'android', 'app', 'src', 'main', 'res', 'values', 'strings.xml'), 'utf8');
-  if (ads.includes("'TODO-") || strings.includes('ca-app-pub-3940256099942544')) {
-    console.error('本番の AdMob ID が未設定です（js/ads.js の広告ユニット ID と android/.../strings.xml の admob_app_id）');
+  const block = ads.slice(ads.indexOf(`    ${platform}: {`));
+  const prod = block.slice(block.indexOf('production: {'), block.indexOf('},', block.indexOf('production: {')));
+  const appIdFile = platform === 'ios'
+    ? path.join(root, 'ios', 'App', 'App', 'Info.plist')
+    : path.join(root, 'android', 'app', 'src', 'main', 'res', 'values', 'strings.xml');
+  const appIdText = fs.readFileSync(appIdFile, 'utf8');
+  if (/: ''/.test(prod) || prod.includes("'TODO-") || appIdText.includes('ca-app-pub-3940256099942544')) {
+    console.error(`本番の AdMob ID（${platform}）が未設定です（js/ads.js の広告ユニット ID と ${path.relative(root, appIdFile)} のアプリ ID）`);
     process.exit(1);
   }
 }

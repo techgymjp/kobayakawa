@@ -42,5 +42,5 @@ under their own licenses, which are not affected by the terms above:
 
 - Shippori Mincho and Yuji Syuku fonts — SIL Open Font License 1.1, loaded from Google Fonts
   at run time (not included in this repository).
-- The Android app uses Capacitor and @capacitor-community/admob (MIT License), installed
-  from npm at build time.
+- The Android and iOS apps use Capacitor and @capacitor-community/admob (MIT License),
+  installed from npm at build time.

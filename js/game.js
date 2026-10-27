@@ -880,6 +880,7 @@ function draw() {
 
   // ---- 画面座標 ----
   ctx.setTransform(DPR, 0, 0, DPR, 0, 0);
+  if (G.hideLabels) return; // ストア用の絵を撮るときは名前などの文字を出さない
   const toS = (x, y) => [ox + x * ZOOM, oy + y * ZOOM];
   // 地名
   ctx.textAlign = 'center'; ctx.textBaseline = 'middle';

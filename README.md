@@ -42,6 +42,7 @@
 - `js/game.js` — ゲーム本体
 - `js/ads.js` / `js/ads-config.js` / `js/build-info.js` — Android アプリ用の広告とバージョン表示（Web 版では何もしない）
 - `android/` / `capacitor.config.json` / `scripts/build-web.js` — Android アプリ（Capacitor）
+- `ios/` — iOS アプリ（Capacitor。Mac での作業手順は `docs/IOS_BUILD.md`）
 - `assets/` — アプリのアイコンと起動画面の元画像
 
 ## Android アプリ
@@ -62,6 +63,17 @@ Capacitor 8 で Android アプリにしています（パッケージ名 `jp.tec
 - タイトル画面にビルド番号・プライバシーポリシー・（EU など必要な地域では）広告の設定
 
 **AdMob は本番の ID が入っています。** アプリ ID は `android/app/src/main/res/values/strings.xml`、全画面広告とリワード広告のユニット ID は `js/ads.js` の `production` にあります。ポーズ中のバナー広告のユニット ID も同じ場所（`banner`）にあります。Google Play 用のビルド（`ADMOB_MODE=production`）だけが本番の広告を出し、動作確認用 APK はテスト広告を表示します（ID が未設定のまま Google Play 用にビルドするとエラーで止まります）。
+
+## iOS アプリ
+
+Android 版と同じ Capacitor で iOS アプリにしています（Bundle ID `jp.techgym.kobayakawa`、iPhone 専用・横画面）。JET STRIKE と同じ構成です。
+
+- ビルドと App Store への提出は Mac の Xcode で行います。手順は [docs/IOS_BUILD.md](docs/IOS_BUILD.md)
+- `npm run ios:sync`（テスト広告）／ `npm run ios:release`（本番広告。App Store 用）／ `npm run ios:open`
+- GitHub Actions（`.github/workflows/ios.yml`）が push のたびに、署名なしでビルドできるかを確認します
+- 広告は Android と同じ出し方で、iOS 用の広告ユニットを使います（`js/ads.js` の `ios`）。起動時に App Tracking Transparency の確認を出します
+- **iOS 用の AdMob ID はまだ入っていません。** アプリ ID（`ios/App/App/Info.plist` の `GADApplicationIdentifier`）と広告ユニット ID 3 つ（`js/ads.js` の `ios.production`）を入れるまで、`npm run ios:release` はエラーで止まります
+- App Store 用の画像は `docs/store/ios/`（スクリーンショット 2622 × 1206 日英各 4 枚、ヘッダ 3840 × 1646、検索結果 3840 × 2560）
 
 ## ライセンス
 
