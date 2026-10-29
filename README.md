@@ -47,6 +47,8 @@
 
 ## Android アプリ
 
+Google Play で公開中：https://play.google.com/store/apps/details?id=jp.techgym.kobayakawa
+
 Capacitor 8 で Android アプリにしています（パッケージ名 `jp.techgym.kobayakawa`、横画面）。ホーム画面のアプリ名は、端末が日本語なら「孤軍奮闘小早川」、それ以外は「Kobayakawa」です。ゲームのファイルはアプリに同梱するので、オフラインでも遊べます（フォントだけはオフラインだと端末の明朝体になります）。
 
 - `npm ci` → `npm run build`（`www/` に Web ファイルをコピー）→ `npx cap sync android` → `cd android && ./gradlew assembleDebug`
