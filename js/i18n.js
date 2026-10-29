@@ -11,6 +11,8 @@ const I18N = (() => {
         + '<p>東も西も、すべてが敵。<b>赤備えの一騎</b>、斬って駆けて、関ヶ原の全武将を討ち果たせ。</p>'
         + '<p class="note">※徳川家康を討っても、戦は終わらぬ。<br>これは、死に場所を見つける戦である。</p>',
       'title.start': '出　陣',
+      'store.playPre': 'アプリ版', 'store.play': 'Google Play で入手',
+      'store.playUrl': 'https://play.google.com/store/apps/details?id=jp.techgym.kobayakawa&hl=ja',
       'ctl.move': '矢印：移動',
       'ctl.sword': '左クリック：刀（3連で回転斬り・弾丸を弾く）',
       'ctl.spear': '右クリック：槍（駆を使う・2人まで貫く・駆けながら突けば突撃）',
@@ -98,6 +100,8 @@ const I18N = (() => {
         + '<p>East and West, everyone is your enemy. <b>A lone rider in crimson armor</b>: cut, ride, and slay every general at Sekigahara.</p>'
         + '<p class="note">* Slaying Tokugawa Ieyasu does not end the battle.<br>This is a battle to find where you will die.</p>',
       'title.start': 'RIDE OUT',
+      'store.playPre': 'Android app', 'store.play': 'Get it on Google Play',
+      'store.playUrl': 'https://play.google.com/store/apps/details?id=jp.techgym.kobayakawa&hl=en',
       'ctl.move': 'Arrows: Move',
       'ctl.sword': 'Left click: Sword (3rd swing spins, deflects bullets)',
       'ctl.spear': 'Right click: Spear (uses Dash, pierces 2, thrust while dashing to charge)',
