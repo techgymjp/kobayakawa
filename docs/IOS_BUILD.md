@@ -236,11 +236,22 @@ base64 -i AuthKey_XXXXXXXXXX.p8 | tr -d '\n' | pbcopy
 
 ---
 
+## 8. Web 版だけの部分をアプリに入れない（Guideline 5.6 対策）
+
+ゲームは Web 版とアプリで同じファイルを使っています。Web 版だけの部分（タイトル画面の Google Play への案内、X・LINE・Facebook へのシェアボタン、ストア用の絵を撮るときのフック）は `web-only` の目印で囲んであり、アプリ用のビルド（`npm run build:app`。`ios:sync` / `ios:release` / `android:sync` と GitHub Actions はこれを使う）では取り除きます。
+
+アプリの中で「隠しているだけ」の機能があると、iOS の審査で「審査中に隠した機能」（Guideline 5.6 - Developer Code of Conduct）としてリジェクトされることがあります（ちゃぶ台返しリメンバーで実際に起きた）。Web 版にだけ何かを足すときは、必ず目印で囲んでください。取り除き忘れて `play.google.com` などが残ると、ビルドが止まります。
+
+もし 5.6 でリジェクトされたら、新しいビルドに差し替え、App Review への返信で「Web 版用のリンクと、それを隠す処理がバンドルに入っていたので取り除いた。審査中と審査後で機能は同じ」と説明し、実機の画面録画を添付します。
+
+---
+
 ## つまずきやすいところ
 
 | 症状 | 対処 |
 | --- | --- |
 | `npm run ios:release` で「本番の AdMob ID（ios）が未設定です」 | iOS 用のアプリ ID と広告ユニット ID 3 つが入っていない。0 章の 3 を済ませて Claude Code に渡す |
+| GitHub Actions の Archive で「maximum number of certificates」 | 自動署名で開発用の証明書が作られすぎた。いまのワークフローは配布用の証明書だけで署名するので起きないはず。起きたら developer.apple.com の Certificates で使っていない開発用の証明書を取り消す |
 | アップロードで「同じビルド番号がすでにある」 | General の Build の番号を上げてから Archive し直す |
 | ビルドを選ぼうとしても、アップロードしたビルドが出てこない | App Store Connect のバージョンの「バージョン」がアプリの Version（1.4.0）と違う。直して保存する |
 | Signing でエラー（チームが選べない、証明書がない） | Xcode の Accounts で Apple ID にサインインし直し、Team を選ぶ。「Automatically manage signing」をオンにする |

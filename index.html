@@ -65,13 +65,14 @@
     </div>
     <button id="btnStart" class="btn primary" data-i18n="title.start">出　陣</button>
     <div class="lang-sel"><button class="lang-btn" data-lang="ja">日本語</button><button class="lang-btn" data-lang="en">English</button></div>
-    <!-- Web 版だけ：アプリのストアへの案内（アプリの中では出さない） -->
+    <!-- web-only：アプリのストアへの案内。アプリ用のビルド（npm run build:app）では取り除く -->
     <div class="store-links">
       <a class="store-link" href="https://play.google.com/store/apps/details?id=jp.techgym.kobayakawa&amp;hl=ja" data-i18n-href="store.playUrl" target="_blank" rel="noopener">
         <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 3.5v17l14-8.5z" fill="currentColor"/></svg>
         <span><small data-i18n="store.playPre">アプリ版</small><b data-i18n="store.play">Google Play で入手</b></span>
       </a>
     </div>
+    <!-- /web-only -->
     <div class="controls">
       <div class="pc">
         <div><kbd>W</kbd><kbd>A</kbd><kbd>S</kbd><kbd>D</kbd> / <span data-i18n="ctl.move">矢印：移動</span></div>
@@ -127,9 +128,11 @@
     </table>
     <div id="rList" class="r-list"></div>
     <div class="share">
+      <!-- web-only：SNS へのシェア。アプリでは端末の共有メニューを使う -->
       <button id="shareX" class="btn share-x" data-i18n="share.x">𝕏 でシェア</button>
       <button id="shareLine" class="btn share-line" data-i18n="share.line">LINEで送る</button>
       <button id="shareFb" class="btn share-fb">Facebook</button>
+      <!-- /web-only -->
       <button id="shareNative" class="btn share-native">共有する</button>
     </div>
     <div class="r-btns">

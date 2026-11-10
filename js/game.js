@@ -880,7 +880,9 @@ function draw() {
 
   // ---- 画面座標 ----
   ctx.setTransform(DPR, 0, 0, DPR, 0, 0);
+  // web-only:start
   if (G.hideLabels) return; // ストア用の絵を撮るときは名前などの文字を出さない
+  // web-only:end
   const toS = (x, y) => [ox + x * ZOOM, oy + y * ZOOM];
   // 地名
   ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
@@ -1391,6 +1393,7 @@ const NATIVE = !!(window.Capacitor && window.Capacitor.isNativePlatform && windo
 const plugin = (name) => (NATIVE && window.Capacitor.Plugins ? window.Capacitor.Plugins[name] : null);
 if (NATIVE) document.body.classList.add('native');
 
+// web-only:start（SNS へのシェア。アプリ用のビルドでは取り除く）
 $('shareX').addEventListener('click', () => {
   window.open('https://twitter.com/intent/tweet?text=' + encodeURIComponent(lastShare) + '&url=' + encodeURIComponent(shareUrl()), '_blank', 'noopener');
 });
@@ -1400,6 +1403,7 @@ $('shareLine').addEventListener('click', () => {
 $('shareFb').addEventListener('click', () => {
   window.open('https://www.facebook.com/sharer/sharer.php?u=' + encodeURIComponent(shareUrl()), '_blank', 'noopener');
 });
+// web-only:end
 $('shareNative').addEventListener('click', async () => {
   const text = lastShare + '\n' + shareUrl();
   // アプリでは Android の共有メニューを出す
