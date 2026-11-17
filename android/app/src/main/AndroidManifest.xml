@@ -38,4 +38,7 @@
     <!-- Permissions -->
 
     <uses-permission android:name="android.permission.INTERNET" />
+
+    <!-- 横画面に固定しているが、横画面の機能は必須にしない（Google Play で端末が絞り込まれないように） -->
+    <uses-feature android:name="android.hardware.screen.landscape" android:required="false" />
 </manifest>
