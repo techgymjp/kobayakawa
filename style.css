@@ -229,6 +229,7 @@ body.lang-en .chip.dead::before { content: "✕ "; }
 .store-link:hover { filter: brightness(1.25); }
 .store-link:active { transform: scale(.96); }
 .store-link svg { width: 22px; height: 22px; color: #34a853; }
+.store-link[href*="apps.apple.com"] svg { color: #fff; }
 .store-link span { display: flex; flex-direction: column; text-align: left; line-height: 1.15; }
 .store-link small { font-size: 10px; color: #ccc; letter-spacing: .05em; }
 .store-link b { font-size: 15px; font-weight: 700; letter-spacing: .02em; }

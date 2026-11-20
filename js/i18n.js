@@ -14,6 +14,7 @@ const I18N = (() => {
       // web-only:start
       'store.playPre': 'アプリ版', 'store.play': 'Google Play で入手',
       'store.playUrl': 'https://play.google.com/store/apps/details?id=jp.techgym.kobayakawa&hl=ja',
+      'store.iosPre': 'iPhone アプリ', 'store.ios': 'App Store で入手',
       // web-only:end
       'ctl.move': '矢印：移動',
       'ctl.sword': '左クリック：刀（3連で回転斬り・弾丸を弾く）',
@@ -105,6 +106,7 @@ const I18N = (() => {
       // web-only:start
       'store.playPre': 'Android app', 'store.play': 'Get it on Google Play',
       'store.playUrl': 'https://play.google.com/store/apps/details?id=jp.techgym.kobayakawa&hl=en',
+      'store.iosPre': 'iPhone app', 'store.ios': 'Download on the App Store',
       // web-only:end
       'ctl.move': 'Arrows: Move',
       'ctl.sword': 'Left click: Sword (3rd swing spins, deflects bullets)',

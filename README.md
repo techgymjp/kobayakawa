@@ -26,7 +26,7 @@
 - 画面端の矢印は最寄りの武将の方角、右下のミニマップは全武将の位置（紫=西軍、青=東軍）。
 - 結果画面では討死の場所・称号・戦果を X / LINE / Facebook で共有できます。
 - 日本語と英語に対応しています（英語名は「Kobayakawa: Lone Samurai」）。
-- Web 版のタイトル画面には Google Play への案内を出します。この案内と SNS へのシェアボタンは、HTML / JS の `web-only` の目印で囲んであり、アプリ用のビルド（`npm run build:app`）では取り除きます（iOS の審査で「隠した機能」と見なされないように）。Web 版の公開は従来どおり `npm run build`。
+- Web 版のタイトル画面には Google Play と App Store への案内を出します。この案内と SNS へのシェアボタンは、HTML / JS の `web-only` の目印で囲んであり、アプリ用のビルド（`npm run build:app`）では取り除きます（iOS の審査で「隠した機能」と見なされないように）。Web 版の公開は従来どおり `npm run build`。
 
 ## 戦場の再現
 
@@ -68,6 +68,8 @@ Capacitor 8 で Android アプリにしています（パッケージ名 `jp.tec
 **AdMob は本番の ID が入っています。** アプリ ID は `android/app/src/main/res/values/strings.xml`、全画面広告とリワード広告のユニット ID は `js/ads.js` の `production` にあります。ポーズ中のバナー広告のユニット ID も同じ場所（`banner`）にあります。Google Play 用のビルド（`ADMOB_MODE=production`）だけが本番の広告を出し、動作確認用 APK はテスト広告を表示します（ID が未設定のまま Google Play 用にビルドするとエラーで止まります）。
 
 ## iOS アプリ
+
+App Store で公開中：https://apps.apple.com/jp/app/id6827751961
 
 Android 版と同じ Capacitor で iOS アプリにしています（Bundle ID `jp.techgym.kobayakawa`、iPhone 専用・横画面）。JET STRIKE と同じ構成です。
 
